@@ -24,7 +24,7 @@ class VerifyStagedLogsOperator(BaseOperator):
                  table_name='',
                  csv_file_path='',
                  *args, **kwargs):
-
+        '''Constructor'''
         super(VerifyStagedLogsOperator, self).__init__(*args, **kwargs)
         self.connection_id = connection_id
         self.table_name = table_name
@@ -32,8 +32,12 @@ class VerifyStagedLogsOperator(BaseOperator):
 
     
     def execute(self, context):
-        self.log.info('VerifyStagedLogsOperator starting')
+        '''Finds the data file for the day of run, connects to postgress, then verifies that file line count - 1
+           is equal to the number of lines insert into the database for the day of the run.
         
+           context : the name of the "Connection" with the host, passwd, etc details defined in Airflow'''
+        
+        self.log.info('VerifyStagedLogsOperator starting')
         self.csv_file_path = os.path.join(self.csv_file_path, '{}.csv'.format(context['ds']))
 
         if os.path.exists(self.csv_file_path):

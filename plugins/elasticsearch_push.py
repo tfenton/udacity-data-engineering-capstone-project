@@ -19,6 +19,8 @@ class ElasticsearchOperator(BaseOperator):
     ui_color = '#89DA59'
     
     def getAzureClient(self):
+        '''Constructs a client object which allows connection to ElasticSearch instance
+           defined in connection "self.connection_id" in the airflow database'''
         return Elasticsearch(
                 BaseHook.get_connection(self.connection_id).host,
                 http_auth=(BaseHook.get_connection(self.connection_id).login,
@@ -36,7 +38,8 @@ class ElasticsearchOperator(BaseOperator):
                  blended_data_select='',
                  blended_data_headers='',
                  *args, **kwargs):
-
+        '''Constructor'''
+        
         super(ElasticsearchOperator, self).__init__(*args, **kwargs)
         self.connection_id = connection_id
         self.index_name = index_name
@@ -45,7 +48,10 @@ class ElasticsearchOperator(BaseOperator):
         self.blended_data_headers = blended_data_headers
         
     def execute(self, context):
-        ''''''
+        '''Connects to postgress, downloads the blended data for the date of run, 
+           and then pushes the data to ElasticSearch
+           
+           context : the name of the "Connection" with the host, passwd, etc details defined in Airflow'''
         self.log.info('ElasticsearchOperator starting')
         try:
             client = getAzureClient()
